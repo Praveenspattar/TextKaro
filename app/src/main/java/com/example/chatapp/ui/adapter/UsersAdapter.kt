@@ -28,8 +28,8 @@ class UsersAdapter(var list: List<UserModel>) : RecyclerView.Adapter<UsersAdapte
     }
 
     class UserViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView){
-        val itemProfilePic : ImageView = itemView.findViewById(R.id.profilePic)
-        val itemUserName : TextView = itemView.findViewById(R.id.userName)
-        val itemMessage : TextView = itemView.findViewById(R.id.message)
+        val itemProfilePic : ImageView = itemView.findViewById(R.id.itemProfilePic)
+        val itemUserName : TextView = itemView.findViewById(R.id.itemUserName)
+        val itemMessage : TextView = itemView.findViewById(R.id.itemMessage)
     }
 }
