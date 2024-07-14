@@ -13,7 +13,13 @@
         android:theme="@style/Theme.ChatApp"
         tools:targetApi="31">
         <activity
-            android:name="com.example.chatapp.ui.CreateAccount"
+            android:name="com.example.chatapp.ui.activities.ProfileActivity"
+            android:exported="false" />
+        <activity
+            android:name="com.example.chatapp.ui.activities.SplashActivity"
+            android:exported="false" />
+        <activity
+            android:name="com.example.chatapp.ui.activities.CreateAccount"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -22,8 +28,8 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="com.example.chatapp.ui.MainActivity"
-            android:exported="true"/>
+            android:name="com.example.chatapp.ui.activities.MainActivity"
+            android:exported="true" />
     </application>
 
 </manifest>
