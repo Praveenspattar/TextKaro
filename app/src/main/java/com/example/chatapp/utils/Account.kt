@@ -1,18 +1,17 @@
-package com.example.chatapp.data
+package com.example.chatapp.utils
 
 import android.content.Context
 import android.content.Intent
 import android.widget.Toast
-import androidx.core.content.ContextCompat.startActivity
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelStoreOwner
+import com.example.chatapp.data.FirebaseAuthService
 import com.example.chatapp.data.repository.AuthRepo
 import com.example.chatapp.data.viewModel.AuthViewModel
 import com.example.chatapp.data.viewModel.AuthViewModelFactory
 import com.example.chatapp.ui.activities.MainActivity
-import com.example.chatapp.utils.MyAuthResult
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 

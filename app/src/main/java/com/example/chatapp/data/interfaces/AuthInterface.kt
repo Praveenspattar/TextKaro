@@ -1,4 +1,4 @@
-package com.example.chatapp.data.`interface`
+package com.example.chatapp.data.interfaces
 
 import com.example.chatapp.utils.MyAuthResult
 

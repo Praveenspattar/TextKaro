@@ -53,6 +53,7 @@ dependencies {
     implementation(libs.firebase.analytics)
     implementation(libs.firebase.storage)
     implementation(libs.firebase.firestore)
+    implementation(libs.firebase.appcheck.playintegrity)
 
     // ViewModel
     implementation(libs.androidx.lifecycle.viewmodel.ktx)

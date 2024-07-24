@@ -1,6 +1,6 @@
 package com.example.chatapp.data.repository
 
-import com.example.chatapp.data.`interface`.AuthInterface
+import com.example.chatapp.data.interfaces.AuthInterface
 import com.example.chatapp.utils.MyAuthResult
 
 class AuthRepo(private val fireServices : AuthInterface) {

@@ -1,13 +1,13 @@
 {
   "project_info": {
-    "project_number": "532512499423",
-    "project_id": "chat-app-6d14a",
-    "storage_bucket": "chat-app-6d14a.appspot.com"
+    "project_number": "1009668227467",
+    "project_id": "chatkaro-bb9c2",
+    "storage_bucket": "chatkaro-bb9c2.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:532512499423:android:7291d5c5ae69b582482b6a",
+        "mobilesdk_app_id": "1:1009668227467:android:aa4d3d182493311154af8e",
         "android_client_info": {
           "package_name": "com.praveen.chatapp"
         }
@@ -15,7 +15,7 @@
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyAqO1raCCuM6XTknfWmUvQmWWB96ZymS6I"
+          "current_key": "AIzaSyCUn7shp4RTRKo9emB3Pwz0D-vhXwrmncQ"
         }
       ],
       "services": {

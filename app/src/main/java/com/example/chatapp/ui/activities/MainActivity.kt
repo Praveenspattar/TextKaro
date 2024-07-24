@@ -3,20 +3,23 @@ package com.example.chatapp.ui.activities
 import android.os.Bundle
 import android.view.View
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.fragment.app.FragmentContainer
+import androidx.lifecycle.Observer
 import androidx.transition.Visibility
+import com.example.chatapp.data.viewModel.FragmentViewModel
+import com.example.chatapp.ui.fragments.HomeFragment
 import com.example.chatapp.ui.fragments.SearchFragment
+import com.example.chatapp.utils.replaceFragment
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.praveen.chatapp.R
 
 class MainActivity : AppCompatActivity() {
 
-    lateinit var addBtn : FloatingActionButton
-    lateinit var searchFragment : SearchFragment
-    lateinit var fragmentContainer: View
+    private val fragmentViewModel: FragmentViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -28,25 +31,23 @@ class MainActivity : AppCompatActivity() {
             insets
         }
 
-        fragmentContainer = findViewById(R.id.fragment_container)
-        addBtn = findViewById(R.id.addBtn)
-        searchFragment = SearchFragment.newInstance()
+        fragmentViewModel.currentFragment.observe(this, Observer { fragmentName ->
+            // Perform fragment transactions based on the fragmentName
+            val fragment = when (fragmentName) {
+                "SearchFragment" -> SearchFragment()
+                "HomeFragment" -> HomeFragment()
+                //"Fragment3" -> Fragment3()
+                else -> SearchFragment()
+            }
+            replaceFragment(fragment, R.id.fragment_container)
+        })
 
-        addBtn.setOnClickListener {
-            it.visibility = View.GONE
-            fragmentContainer.visibility = View.VISIBLE
-            supportFragmentManager.beginTransaction()
-                .replace(R.id.fragment_container, searchFragment)
-                .addToBackStack(null)
-                .commit()
-        }
+        navigateToFragment("HomeFragment")
 
     }
 
-    fun showFABtn(){
-        addBtn = findViewById(R.id.addBtn)
-        addBtn.visibility = View.VISIBLE
-        fragmentContainer.visibility = View.GONE
+    fun navigateToFragment(fragmentName: String) {
+        fragmentViewModel.setCurrentFragment(fragmentName)
     }
 
 }
