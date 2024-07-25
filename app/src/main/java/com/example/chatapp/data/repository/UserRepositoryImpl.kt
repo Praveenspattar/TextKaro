@@ -4,11 +4,13 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
+import android.util.Log
 import com.example.chatapp.data.interfaces.UserRepository
 import com.example.chatapp.ui.activities.MainActivity
 import com.example.chatapp.utils.User
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.SetOptions
+import com.google.firebase.firestore.toObject
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
 
@@ -33,6 +35,26 @@ class UserRepositoryImpl(private val context: Context) : UserRepository {
             }
             .addOnFailureListener {
                 onComplete(false, it.message)
+            }
+    }
+
+    override fun searchUserByEmail(email: String, onComplete: (User?) -> Unit) {
+        firestore.collectionGroup("profile")
+            .whereEqualTo("email", email)
+            .get()
+            .addOnSuccessListener { documents ->
+                if (documents.isEmpty) {
+                    onComplete(null)
+                } else {
+                    for (document in documents) {
+                        val user = document.toObject(User::class.java)
+                        onComplete(user)
+                    }
+                }
+            }
+            .addOnFailureListener {
+                Log.e("mail",it.message.toString())
+                onComplete(null)
             }
     }
 

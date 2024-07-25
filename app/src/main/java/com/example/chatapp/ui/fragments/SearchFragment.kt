@@ -1,5 +1,6 @@
 package com.example.chatapp.ui.fragments
 
+import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
@@ -12,7 +13,13 @@ import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
+import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import com.bumptech.glide.Glide
+import com.example.chatapp.data.repository.UserRepositoryImpl
+import com.example.chatapp.data.viewModel.UserProfileViewModel
+import com.example.chatapp.data.viewModel.UserProfileViewModelFactory
 import com.example.chatapp.ui.activities.MainActivity
 import com.example.chatapp.utils.User
 import com.google.firebase.firestore.FirebaseFirestore
@@ -26,6 +33,7 @@ class SearchFragment : Fragment() {
     lateinit var searchUserName: TextView
     lateinit var searchAddBtn: Button
     private val firestore = FirebaseFirestore.getInstance()
+    private lateinit var userProfileViewModel: UserProfileViewModel
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -47,15 +55,20 @@ class SearchFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        val userRepository = UserRepositoryImpl(mainActivity)
+        val factory = UserProfileViewModelFactory(userRepository)
+        userProfileViewModel = ViewModelProvider(this, factory)[UserProfileViewModel::class.java]//UserProfileViewModel(userRepository)
+        userProfileViewModel.user.observe(this as LifecycleOwner, Observer { user ->
+            if (user != null) {
+                displayUserData(user, searchProfilePic, searchUserName)
+            } else {
+                Toast.makeText(context, "User not found", Toast.LENGTH_SHORT).show()
+            }
+        })
+
         searchImageView.setOnClickListener{
             if (searchEditText.text.isNotEmpty()) {
-                searchUserByEmail(searchEditText.text.toString()) {
-                    if (it != null) {
-                        displayUserData(it, searchProfilePic, searchUserName)
-                    } else {
-                        Toast.makeText(context, "User not found", Toast.LENGTH_SHORT).show()
-                    }
-                }
+                userProfileViewModel.searchUserByEmail(searchEditText.text.toString())
             }
         }
 
@@ -68,32 +81,7 @@ class SearchFragment : Fragment() {
 
     }
 
-     private fun searchUserByEmail(email: String, onComplete: (User?) -> Unit) {
-
-        firestore.collectionGroup("profile")
-            .whereEqualTo("email", email)
-            .get()
-            .addOnSuccessListener { documents ->
-                if (documents.isEmpty) {
-                    onComplete(null)
-                } else {
-                    //val user = documents.documents[0].toObject(User::class.java)
-                    //onComplete(user)
-                    for (document in documents) {
-                        val user = document.toObject(User::class.java)
-                        onComplete(user)
-                        break
-                    }
-                }
-            }
-            .addOnFailureListener {
-                Log.e("mail",it.message.toString())
-                onComplete(null)
-            }
-    }
-
     private fun displayUserData(user: User, profileImageView: ImageView, usernameTextView: TextView) {
-        // Load the profile picture using Glide or any other image loading library
         Glide.with(this)
             .load(user.profilePictureUrl)
             .into(profileImageView)
