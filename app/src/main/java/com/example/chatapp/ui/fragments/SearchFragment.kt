@@ -1,8 +1,6 @@
 package com.example.chatapp.ui.fragments
 
-import android.content.Context
 import android.os.Bundle
-import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -22,7 +20,7 @@ import com.example.chatapp.data.viewModel.UserProfileViewModel
 import com.example.chatapp.data.viewModel.UserProfileViewModelFactory
 import com.example.chatapp.ui.activities.MainActivity
 import com.example.chatapp.utils.User
-import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.auth.FirebaseAuth
 import com.praveen.chatapp.R
 
 class SearchFragment : Fragment() {
@@ -31,9 +29,9 @@ class SearchFragment : Fragment() {
     lateinit var searchImageView: ImageView
     lateinit var searchProfilePic: ImageView
     lateinit var searchUserName: TextView
-    lateinit var searchAddBtn: Button
-    private val firestore = FirebaseFirestore.getInstance()
+    lateinit var addUserBtn: Button
     private lateinit var userProfileViewModel: UserProfileViewModel
+    private var friendUserId: String = ""
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -47,7 +45,7 @@ class SearchFragment : Fragment() {
         searchImageView = view.findViewById(R.id.searchImageView)
         searchProfilePic = view.findViewById(R.id.searchProfilePic)
         searchUserName = view.findViewById(R.id.searchUserName)
-        searchAddBtn = view.findViewById(R.id.searchAddBtn)
+        addUserBtn = view.findViewById(R.id.searchAddBtn)
 
         return view
     }
@@ -55,14 +53,24 @@ class SearchFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        val currentUserId = FirebaseAuth.getInstance().currentUser?.uid ?: return
         val userRepository = UserRepositoryImpl(mainActivity)
         val factory = UserProfileViewModelFactory(userRepository)
         userProfileViewModel = ViewModelProvider(this, factory)[UserProfileViewModel::class.java]//UserProfileViewModel(userRepository)
         userProfileViewModel.user.observe(this as LifecycleOwner, Observer { user ->
             if (user != null) {
+                friendUserId = user.userId
                 displayUserData(user, searchProfilePic, searchUserName)
             } else {
                 Toast.makeText(context, "User not found", Toast.LENGTH_SHORT).show()
+            }
+        })
+
+        userProfileViewModel.operationResult.observe(this as LifecycleOwner, Observer { success ->
+            if (success) {
+                Toast.makeText(context, "Friend added and chat created successfully", Toast.LENGTH_SHORT).show()
+            } else {
+                Toast.makeText(context, "Failed to add friend", Toast.LENGTH_SHORT).show()
             }
         })
 
@@ -72,10 +80,14 @@ class SearchFragment : Fragment() {
             }
         }
 
+        addUserBtn.setOnClickListener {
+            userProfileViewModel.addFriendAndCreateChat(currentUserId,friendUserId)
+        }
+
         //Back pressed
         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
-                mainActivity.navigateToFragment("HomeFragment") // Example
+                mainActivity.navigateToFragment("HomeFragment")
             }
         })
 

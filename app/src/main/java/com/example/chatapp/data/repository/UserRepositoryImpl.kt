@@ -8,6 +8,7 @@ import android.util.Log
 import com.example.chatapp.data.interfaces.UserRepository
 import com.example.chatapp.ui.activities.MainActivity
 import com.example.chatapp.utils.User
+import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.SetOptions
 import com.google.firebase.firestore.toObject
@@ -55,6 +56,64 @@ class UserRepositoryImpl(private val context: Context) : UserRepository {
             .addOnFailureListener {
                 Log.e("mail",it.message.toString())
                 onComplete(null)
+            }
+    }
+
+    override fun addFriendAndCreateChat(currentUserId: String, friendUserId: String, onComplete: (Boolean) -> Unit) {
+        addFriend(currentUserId, friendUserId) { success ->
+            if (success) {
+                createChat(currentUserId, friendUserId) { chatSuccess ->
+                    onComplete(chatSuccess)
+                }
+            } else {
+                onComplete(false)
+            }
+        }
+    }
+
+    private fun addFriend(currentUserId: String, friendUserId: String, onComplete: (Boolean) -> Unit) {
+        val currentUserRef = firestore.collection("users").document(currentUserId).collection("profile").document("friends")
+        val friendUserRef = firestore.collection("users").document(friendUserId).collection("profile").document("friends")
+
+        firestore.runTransaction { transaction ->
+            val currentUserSnapshot = transaction.get(currentUserRef)
+            val friendUserSnapshot = transaction.get(friendUserRef)
+
+            if (!currentUserSnapshot.exists()) {
+                transaction.set(currentUserRef, mapOf("friends" to listOf(friendUserId)))
+            } else {
+                transaction.update(currentUserRef, "friends", FieldValue.arrayUnion(friendUserId))
+            }
+
+            if (!friendUserSnapshot.exists()) {
+                transaction.set(friendUserRef, mapOf("friends" to listOf(currentUserId)))
+            } else {
+                transaction.update(friendUserRef, "friends", FieldValue.arrayUnion(currentUserId))
+            }
+        }.addOnSuccessListener {
+            onComplete(true)
+        }.addOnFailureListener {
+            Log.e("addFriend", it.message.toString())
+            onComplete(false)
+        }
+    }
+
+    private fun createChat(currentUserId: String, friendUserId: String, onComplete: (Boolean) -> Unit) {
+        val chatId = if (currentUserId < friendUserId) "$currentUserId-$friendUserId" else "$friendUserId-$currentUserId"
+        val chatData = hashMapOf(
+            "users" to listOf(currentUserId, friendUserId),
+            "createdAt" to FieldValue.serverTimestamp()
+        )
+
+        firestore.collection("chats")
+            .document(chatId)
+            .set(chatData, SetOptions.merge())
+            .addOnSuccessListener {
+                onComplete(true)
+            }
+            .addOnFailureListener {
+                Log.e("createChat", it.message.toString())
+                onComplete(false)
             }
     }
 

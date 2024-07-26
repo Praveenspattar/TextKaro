@@ -16,6 +16,9 @@ class UserProfileViewModel(private val userRepository: UserRepository) : ViewMod
     private val _user = MutableLiveData<User?>()
     val user: LiveData<User?> get() = _user
 
+    private val _operationResult = MutableLiveData<Boolean>()
+    val operationResult: LiveData<Boolean> get() = _operationResult
+
     fun uploadProfilePicture(userId: String, username: String, profilePictureUri: Uri, email: String) {
         userRepository.uploadProfilePicture(userId, username, profilePictureUri, email) { success, message ->
             _uploadStatus.postValue(Pair(success, message))
@@ -25,6 +28,12 @@ class UserProfileViewModel(private val userRepository: UserRepository) : ViewMod
     fun searchUserByEmail(email: String) {
         userRepository.searchUserByEmail(email) {user ->
             _user.postValue(user)
+        }
+    }
+
+    fun addFriendAndCreateChat(currentUserId: String, friendUserId: String) {
+        userRepository.addFriendAndCreateChat(currentUserId, friendUserId) { success ->
+            _operationResult.postValue(success)
         }
     }
 }
