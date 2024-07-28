@@ -1,29 +1,36 @@
 package com.example.chatapp.ui.fragments
 
 import android.os.Bundle
-import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.activity.OnBackPressedCallback
+import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import com.example.chatapp.FirestoreUtil
+import com.example.chatapp.data.model.UserModel
+import com.example.chatapp.data.repository.FriendRepositoryImpl
+import com.example.chatapp.data.viewModel.FriendViewModel
+import com.example.chatapp.data.viewModel.FriendViewModelFactory
 import com.example.chatapp.ui.activities.MainActivity
+import com.example.chatapp.ui.adapter.UsersAdapter
 import com.google.android.material.floatingactionbutton.FloatingActionButton
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
 import com.praveen.chatapp.R
 
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
-
-/**
- * A simple [Fragment] subclass.
- * Use the [HomeFragment.newInstance] factory method to
- * create an instance of this fragment.
- */
 class HomeFragment : Fragment() {
     private lateinit var addBtn: FloatingActionButton
     private lateinit var mainActivity: MainActivity
+    private lateinit var friendViewModel: FriendViewModel
+    private lateinit var allFriends: List<UserModel>
+    private lateinit var friendsRv: RecyclerView
+    private lateinit var usersAdapter: UsersAdapter
+    private lateinit var firestore: FirebaseFirestore
+    private val currentUserId = FirebaseAuth.getInstance().currentUser?.uid
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -33,14 +40,38 @@ class HomeFragment : Fragment() {
         val view = inflater.inflate(R.layout.fragment_home, container, false)
 
         mainActivity = activity as MainActivity
-
         addBtn = view.findViewById(R.id.addBtn)
-        addBtn.setOnClickListener{
-            mainActivity.navigateToFragment("SearchFragment")
-        }
+        friendsRv = view.findViewById(R.id.friendsRv)
 
         // Inflate the layout for this fragment
         return view
+
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        allFriends = mutableListOf()
+        firestore = FirestoreUtil.getFirestoreInstance()
+
+        val friendRepository = FriendRepositoryImpl(firestore)
+        val factory = FriendViewModelFactory(friendRepository)
+        friendViewModel = ViewModelProvider(this,factory)[FriendViewModel::class.java]
+        friendViewModel.friendsList.observe(mainActivity as LifecycleOwner, Observer {friendList ->
+            if (friendList.isNotEmpty()) {
+                allFriends = friendList
+
+                usersAdapter = UsersAdapter(allFriends)
+                friendsRv.adapter = usersAdapter
+                friendsRv.layoutManager = LinearLayoutManager(mainActivity)
+            }
+        })
+
+        friendViewModel.fetchFriends(currentUserId.toString())
+
+        addBtn.setOnClickListener{
+            mainActivity.navigateToFragment("SearchFragment")
+        }
 
     }
 

@@ -10,7 +10,7 @@ import com.bumptech.glide.Glide
 import com.example.chatapp.data.model.UserModel
 import com.praveen.chatapp.R
 
-class UsersAdapter(var list: List<UserModel>) : RecyclerView.Adapter<UsersAdapter.UserViewHolder>() {
+class UsersAdapter(private var list: List<UserModel>) : RecyclerView.Adapter<UsersAdapter.UserViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): UserViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.item_users,parent,false)

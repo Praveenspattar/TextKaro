@@ -7,11 +7,10 @@ import android.net.Uri
 import android.util.Log
 import com.example.chatapp.data.interfaces.UserRepository
 import com.example.chatapp.ui.activities.MainActivity
-import com.example.chatapp.utils.User
+import com.example.chatapp.data.model.User
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.SetOptions
-import com.google.firebase.firestore.toObject
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
 
@@ -72,24 +71,12 @@ class UserRepositoryImpl(private val context: Context) : UserRepository {
     }
 
     private fun addFriend(currentUserId: String, friendUserId: String, onComplete: (Boolean) -> Unit) {
-        val currentUserRef = firestore.collection("users").document(currentUserId).collection("profile").document("friends")
-        val friendUserRef = firestore.collection("users").document(friendUserId).collection("profile").document("friends")
+        val currentUserRef = firestore.collection("users").document(currentUserId).collection("friends").document(friendUserId)
+        val friendUserRef = firestore.collection("users").document(friendUserId).collection("friends").document(currentUserId)
 
         firestore.runTransaction { transaction ->
-            val currentUserSnapshot = transaction.get(currentUserRef)
-            val friendUserSnapshot = transaction.get(friendUserRef)
-
-            if (!currentUserSnapshot.exists()) {
-                transaction.set(currentUserRef, mapOf("friends" to listOf(friendUserId)))
-            } else {
-                transaction.update(currentUserRef, "friends", FieldValue.arrayUnion(friendUserId))
-            }
-
-            if (!friendUserSnapshot.exists()) {
-                transaction.set(friendUserRef, mapOf("friends" to listOf(currentUserId)))
-            } else {
-                transaction.update(friendUserRef, "friends", FieldValue.arrayUnion(currentUserId))
-            }
+            transaction.set(currentUserRef, mapOf("added" to true))
+            transaction.set(friendUserRef, mapOf("added" to true))
         }.addOnSuccessListener {
             onComplete(true)
         }.addOnFailureListener {

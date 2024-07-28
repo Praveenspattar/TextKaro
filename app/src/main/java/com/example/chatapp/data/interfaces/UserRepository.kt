@@ -1,7 +1,7 @@
 package com.example.chatapp.data.interfaces
 
 import android.net.Uri
-import com.example.chatapp.utils.User
+import com.example.chatapp.data.model.User
 
 interface UserRepository {
     fun uploadProfilePicture(userId: String, username: String, profilePictureUri: Uri, email: String, onComplete: (Boolean, String?) -> Unit)

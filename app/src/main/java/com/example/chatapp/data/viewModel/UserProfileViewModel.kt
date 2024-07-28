@@ -5,7 +5,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.chatapp.data.interfaces.UserRepository
-import com.example.chatapp.utils.User
+import com.example.chatapp.data.model.User
 
 class UserProfileViewModel(private val userRepository: UserRepository) : ViewModel() {
 

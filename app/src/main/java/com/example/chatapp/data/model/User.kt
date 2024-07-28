@@ -1,4 +1,4 @@
-package com.example.chatapp.utils
+package com.example.chatapp.data.model
 
 data class User(
     val userId: String = "",
