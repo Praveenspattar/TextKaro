@@ -2,4 +2,8 @@
 <resources>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+    <color name="primarycolor">#6383ee</color>
+    <color name="appbackgroundcolor">#fffbf9</color>
+    <color name="secondarycolor">#89a1f3</color>
+    <color name="receivedmsgcolor">#e4e9fd</color>
 </resources>

@@ -1,5 +1,6 @@
 package com.example.chatapp.ui.adapter
 
+import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -7,10 +8,12 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.example.chatapp.FirebaseUtil
 import com.example.chatapp.data.model.UserModel
+import com.example.chatapp.ui.activities.MainActivity
 import com.praveen.chatapp.R
 
-class UsersAdapter(private var list: List<UserModel>) : RecyclerView.Adapter<UsersAdapter.UserViewHolder>() {
+class UsersAdapter(private val mainActivity: MainActivity, private var friendList: List<UserModel>) : RecyclerView.Adapter<UsersAdapter.UserViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): UserViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.item_users,parent,false)
@@ -18,13 +21,28 @@ class UsersAdapter(private var list: List<UserModel>) : RecyclerView.Adapter<Use
     }
 
     override fun getItemCount(): Int {
-        return  list.size
+        return  friendList.size
     }
 
     override fun onBindViewHolder(holder: UserViewHolder, position: Int) {
-        Glide.with(holder.itemView).load(list[position].imageUrl).into(holder.itemProfilePic)
-        holder.itemUserName.text = list[position].name
-        holder.itemMessage.text = list[position].lastMsg
+        Glide.with(holder.itemView).load(friendList[position].imageUrl).into(holder.itemProfilePic)
+        holder.itemUserName.text = friendList[position].name
+        holder.itemMessage.text = friendList[position].lastMsg
+
+        holder.itemView.setOnClickListener {
+            val  currentUserId = FirebaseUtil.getFirebaseAuthInstance().currentUser?.uid
+            val friendUserId = friendList[position].friendUid
+            val chatId = if (currentUserId!! < friendUserId) "$currentUserId-$friendUserId" else "$friendUserId-$currentUserId"
+            val bundle = Bundle().apply {
+                putString("userName", friendList[position].name)
+                putString("chatId", chatId)
+                putString("imgurl", friendList[position].imageUrl)
+                putString("friendUid",friendUserId)
+            }
+            mainActivity.navigateToFragment("ChatFragment", bundle)
+
+        }
+
     }
 
     class UserViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView){

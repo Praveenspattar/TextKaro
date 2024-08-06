@@ -4,5 +4,5 @@ data class UserModel(
     val imageUrl : String,
     val name: String,
     val lastMsg: String,
-    val chatUid: String
+    val friendUid: String
 )

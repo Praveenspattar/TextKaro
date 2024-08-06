@@ -11,6 +11,7 @@ import androidx.fragment.app.FragmentContainer
 import androidx.lifecycle.Observer
 import androidx.transition.Visibility
 import com.example.chatapp.data.viewModel.FragmentViewModel
+import com.example.chatapp.ui.fragments.ChatFragment
 import com.example.chatapp.ui.fragments.HomeFragment
 import com.example.chatapp.ui.fragments.SearchFragment
 import com.example.chatapp.utils.replaceFragment
@@ -31,13 +32,14 @@ class MainActivity : AppCompatActivity() {
             insets
         }
 
-        fragmentViewModel.currentFragment.observe(this, Observer { fragmentName ->
-            // Perform fragment transactions based on the fragmentName
+        fragmentViewModel.currentFragment.observe(this, Observer { fragmentData ->
+            val fragmentName = fragmentData.first
+            val args = fragmentData.second
             val fragment = when (fragmentName) {
-                "SearchFragment" -> SearchFragment()
-                "HomeFragment" -> HomeFragment()
-                //"Fragment3" -> Fragment3()
-                else -> SearchFragment()
+                "SearchFragment" -> SearchFragment().apply { arguments = args }
+                "HomeFragment" -> HomeFragment().apply { arguments = args }
+                "ChatFragment" -> ChatFragment().apply { arguments = args }
+                else -> SearchFragment().apply { arguments = args }
             }
             replaceFragment(fragment, R.id.fragment_container)
         })
@@ -46,8 +48,8 @@ class MainActivity : AppCompatActivity() {
 
     }
 
-    fun navigateToFragment(fragmentName: String) {
-        fragmentViewModel.setCurrentFragment(fragmentName)
+    fun navigateToFragment(fragmentName: String, args: Bundle? = null) {
+        fragmentViewModel.setCurrentFragment(fragmentName, args)
     }
 
 }

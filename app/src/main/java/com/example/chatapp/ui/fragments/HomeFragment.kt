@@ -10,7 +10,7 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.example.chatapp.FirestoreUtil
+import com.example.chatapp.FirebaseUtil
 import com.example.chatapp.data.model.UserModel
 import com.example.chatapp.data.repository.FriendRepositoryImpl
 import com.example.chatapp.data.viewModel.FriendViewModel
@@ -52,7 +52,7 @@ class HomeFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         allFriends = mutableListOf()
-        firestore = FirestoreUtil.getFirestoreInstance()
+        firestore = FirebaseUtil.getFirestoreInstance()
 
         val friendRepository = FriendRepositoryImpl(firestore)
         val factory = FriendViewModelFactory(friendRepository)
@@ -61,7 +61,7 @@ class HomeFragment : Fragment() {
             if (friendList.isNotEmpty()) {
                 allFriends = friendList
 
-                usersAdapter = UsersAdapter(allFriends)
+                usersAdapter = UsersAdapter(mainActivity,allFriends)
                 friendsRv.adapter = usersAdapter
                 friendsRv.layoutManager = LinearLayoutManager(mainActivity)
             }
