@@ -1,10 +1,12 @@
 package com.example.chatapp.ui.activities
 
+import android.os.Build
 import android.os.Bundle
 import android.view.View
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.fragment.app.FragmentContainer
@@ -30,6 +32,10 @@ class MainActivity : AppCompatActivity() {
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
+        }
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            window.statusBarColor = ContextCompat.getColor(this, R.color.primarycolor)
         }
 
         fragmentViewModel.currentFragment.observe(this, Observer { fragmentData ->

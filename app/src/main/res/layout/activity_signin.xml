@@ -5,49 +5,65 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.example.chatapp.ui.activities.SigninActivity">
+    tools:context="com.example.chatapp.ui.activities.SigninActivity"
+    android:background="@drawable/chatscreenbg">
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="signin"
-        android:textAllCaps="true"
-        android:textSize="26sp"
-        android:layout_marginTop="30dp"
+        android:layout_marginBottom="60dp"
+        android:fontFamily="@font/roboto_slab_medium"
+        android:text="Signin"
+        android:textColor="@color/primarycolor"
+        android:textSize="30sp"
+        android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintBottom_toTopOf="@+id/centerLayout"
+        android:background="@android:color/transparent" />
 
     <LinearLayout
+        android:id="@+id/centerLayout"
         android:layout_width="300dp"
         android:layout_height="wrap_content"
         android:orientation="vertical"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toTopOf="parent"
+        android:background="@android:color/transparent">
 
         <EditText
             android:id="@+id/emailET"
             android:layout_width="match_parent"
             android:layout_height="50dp"
-            android:hint="email"
+            android:hint="Enter Your Email"
+            android:textColorHint="@color/primarycolor"
+            android:textColor="@color/primarycolor"
             android:inputType="textEmailAddress"
+            android:background="@drawable/loginetbg"
+            android:paddingHorizontal="10dp"
+            android:layout_marginVertical="15dp"
             />
 
         <EditText
             android:id="@+id/passwordET"
             android:layout_width="match_parent"
             android:layout_height="50dp"
-            android:hint="password"
-            android:inputType="textPassword" />
+            android:hint="Type Your Password"
+            android:textColorHint="@color/primarycolor"
+            android:inputType="textPassword"
+            android:background="@drawable/loginetbg"
+            android:paddingHorizontal="10dp"
+            android:layout_marginVertical="15dp" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/creatBtn"
             android:layout_width="match_parent"
-            android:layout_height="50dp"
-            android:text="create"
-            android:textAllCaps="true"/>
+            android:layout_height="55dp"
+            android:text="sign in"
+            android:textAllCaps="true"
+            android:layout_marginVertical="15dp"/>
 
     </LinearLayout>
 

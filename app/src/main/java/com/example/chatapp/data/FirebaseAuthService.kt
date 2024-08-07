@@ -36,6 +36,7 @@ class FirebaseAuthService(private val context: Context) : AuthInterface {
                     if (task.isSuccessful){
                         //val intent = Intent(context, MainActivity::class.java)
                         val intent = Intent(context, ProfileActivity::class.java)
+                        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
                         context.startActivity(intent)
                         (context as? Activity)?.finish()
                     }

@@ -142,6 +142,12 @@ class ChatFragment : Fragment() {
                 }
                 // Update your RecyclerView adapter with chatMessages
                 chatMessageAdapter.updateMessages(chatMessages)
+
+                val itemCount = (chatsRv.adapter as ChatMessageAdapter).itemCount
+                if (itemCount > 0) {
+                    chatsRv.scrollToPosition(itemCount - 1)
+                }
+
             }
     }
 

@@ -15,6 +15,7 @@
         android:layout_height="wrap_content"
         android:text="Hello!"
         android:textSize="16sp"
+        android:background="@android:color/transparent"
         android:textColor="@android:color/white" />
 
     <TextView
@@ -24,6 +25,7 @@
         android:text="12:00 PM"
         android:textSize="12sp"
         android:textColor="@android:color/white"
+        android:background="@android:color/transparent"
         android:layout_marginTop="4dp" />
 
 </LinearLayout>

@@ -3,7 +3,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context="com.example.chatapp.ui.fragments.ChatFragment">
+    tools:context="com.example.chatapp.ui.fragments.ChatFragment"
+    android:background="@drawable/chatscreenbg">
 
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/appbar_layout"
@@ -53,19 +54,32 @@
                 android:layout_height="wrap_content"
                 android:textSize="18sp"
                 android:layout_marginStart="20dp"
-                android:text="user name"/>
+                android:text="user name"
+                android:background="@android:color/transparent"/>
 
         </LinearLayout>
 
     </com.google.android.material.appbar.AppBarLayout>
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/chatsRv"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
         app:layout_constraintTop_toBottomOf="@+id/appbar_layout"
         app:layout_constraintBottom_toTopOf="@+id/msg_edit_text"
-        android:layout_margin="10dp"/>
+        android:layout_margin="10dp"
+        android:background="@android:color/transparent">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/chatsRv"
+            android:layout_gravity="bottom"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:background="@android:color/transparent"/>
+
+    </LinearLayout>
+
+
 
     <EditText
         android:id="@+id/msg_edit_text"

@@ -5,20 +5,25 @@
     android:layout_height="match_parent"
     tools:context="com.example.chatapp.ui.fragments.SearchFragment">
 
+
+
     <EditText
         android:id="@+id/searchEditText"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
+        android:layout_height="45dp"
         android:layout_marginHorizontal="13dp"
         android:layout_marginTop="30dp"
         android:padding="10dp"
         android:inputType="textEmailAddress"
-        android:hint="search by email"
+        android:hint="Search User By Email"
+        android:textColor="@color/primarycolor"
+        android:textColorHint="@color/primarycolor"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/searchImageView"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintWidth_default="spread"
-        app:layout_constraintHorizontal_weight="1"/>
+        app:layout_constraintHorizontal_weight="1"
+        android:background="@drawable/loginetbg"/>
 
     <ImageView
         android:id="@+id/searchImageView"
@@ -71,7 +76,8 @@
             android:layout_width="250dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="25dp"
-            android:text="ADD"/>
+            android:text="Add To List"
+            android:textAllCaps="true"/>
 
     </LinearLayout>
 

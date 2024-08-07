@@ -4,6 +4,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.widget.Button
 import android.widget.EditText
+import android.widget.ImageView
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
@@ -19,6 +20,7 @@ class CreateAccount : AppCompatActivity() {
     lateinit var creatBtn: Button
     lateinit var emailET: EditText
     lateinit var passwordET: EditText
+    lateinit var signinArrow: ImageView
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -33,6 +35,7 @@ class CreateAccount : AppCompatActivity() {
         creatBtn = findViewById(R.id.creatBtn)
         emailET = findViewById(R.id.emailET)
         passwordET = findViewById(R.id.passwordET)
+        signinArrow = findViewById(R.id.signinArrow)
 
         val user = account.getCurrentUser()
 
@@ -42,6 +45,11 @@ class CreateAccount : AppCompatActivity() {
             val intent = Intent(this,MainActivity::class.java)
             startActivity(intent)
             finish()
+        }
+
+        signinArrow.setOnClickListener {
+            val intent = Intent(this,SigninActivity::class.java)
+            startActivity(intent)
         }
 
         creatBtn.setOnClickListener{

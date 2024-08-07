@@ -81,6 +81,10 @@ class SearchFragment : Fragment() {
         }
 
         addUserBtn.setOnClickListener {
+            if (friendUserId == "") {
+                Toast.makeText(context,"No User Searched",Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
             userProfileViewModel.addFriendAndCreateChat(currentUserId,friendUserId)
         }
 
