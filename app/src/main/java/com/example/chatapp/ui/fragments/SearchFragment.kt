@@ -75,7 +75,10 @@ class SearchFragment : Fragment() {
         })
 
         searchImageView.setOnClickListener{
-            if (searchEditText.text.isNotEmpty()) {
+            if (searchEditText.text.isEmpty() || !isValidEmail(searchEditText.text.toString())) {
+                Toast.makeText(context, "Enter Valid Email", Toast.LENGTH_SHORT).show()
+            }
+            else {
                 userProfileViewModel.searchUserByEmail(searchEditText.text.toString())
             }
         }
@@ -106,5 +109,9 @@ class SearchFragment : Fragment() {
         usernameTextView.text = user.username
     }
 
+    private fun isValidEmail(email: String): Boolean {
+        val emailRegex = "^[A-Za-z0-9+_.-]+@gmail.com$".toRegex()
+        return email.matches(emailRegex)
+    }
 
 }

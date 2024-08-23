@@ -85,6 +85,26 @@ class UserRepositoryImpl(private val context: Context) : UserRepository {
         }
     }
 
+    override fun deleteFriend(currentUserId: String, friendUserId: String, onComplete: (Boolean) -> Unit) {
+        val currentUserRef = firestore.collection("users").document(currentUserId).collection("friends").document(friendUserId)
+        val friendUserRef = firestore.collection("users").document(friendUserId).collection("friends").document(currentUserId)
+
+        firestore.runTransaction { transaction ->
+            transaction.delete(currentUserRef)
+            transaction.delete(friendUserRef)
+
+            // Delete the chat between the users
+            val chatId = if (currentUserId < friendUserId) "$currentUserId-$friendUserId" else "$friendUserId-$currentUserId"
+            val chatRef = firestore.collection("chats").document(chatId)
+            transaction.delete(chatRef)
+        }.addOnSuccessListener {
+            onComplete(true)
+        }.addOnFailureListener { exception ->
+            Log.e("deleteFriend", exception.message.toString())
+            onComplete(false)
+        }
+    }
+
     private fun createChat(currentUserId: String, friendUserId: String, onComplete: (Boolean) -> Unit) {
         val chatId = if (currentUserId < friendUserId) "$currentUserId-$friendUserId" else "$friendUserId-$currentUserId"
         val chatData = hashMapOf(

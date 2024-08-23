@@ -38,7 +38,7 @@ class ChatFragment : Fragment() {
     lateinit var chatId: String
     lateinit var messageReference: CollectionReference
     lateinit var messageEt: EditText
-    val messageId = UUID.randomUUID().toString()
+    lateinit var messageId: String
     lateinit var chatMessage: ChatMessage
     lateinit var chatMessageAdapter: ChatMessageAdapter
 
@@ -82,23 +82,27 @@ class ChatFragment : Fragment() {
         }
 
         sendBtn.setOnClickListener {
+            if (messageEt.text.toString().isNotEmpty()) {
+                messageId = UUID.randomUUID().toString()
+                chatMessage = ChatMessage(
+                    messageId, currentUid, friendUid,
+                    messageEt.text.toString(), System.currentTimeMillis()
+                )
 
-            chatMessage = ChatMessage(messageId,currentUid,friendUid,
-                messageEt.text.toString(),System.currentTimeMillis())
+                //val chatId = if (currentUserId < friendUserId) "$currentUserId-$friendUserId" else "$friendUserId-$currentUserId"
+                //val messageReference = FirebaseUtil.getFirestoreInstance().collection("chats").document(chatId).collection("messages")
 
-            //val chatId = if (currentUserId < friendUserId) "$currentUserId-$friendUserId" else "$friendUserId-$currentUserId"
-            //val messageReference = FirebaseUtil.getFirestoreInstance().collection("chats").document(chatId).collection("messages")
+                messageReference.document(messageId)
+                    .set(chatMessage)
+                    .addOnSuccessListener {
+                        Log.d("Firestore", "Message added successfully")
+                    }
+                    .addOnFailureListener { e ->
+                        Log.e("Firestore", "Error adding message", e)
+                    }
 
-            messageReference.document(messageId)
-                .set(chatMessage)
-                .addOnSuccessListener {
-                    Log.d("Firestore", "Message added successfully")
-                }
-                .addOnFailureListener { e ->
-                    Log.e("Firestore", "Error adding message", e)
-                }
-
-            messageEt.setText("")
+                messageEt.setText("")
+            }
 
         }
 
@@ -107,13 +111,6 @@ class ChatFragment : Fragment() {
         chatMessageAdapter = ChatMessageAdapter(currentUid,chatMessages)
 
         fetchMessages()
-
-//        val chatMessageAdapter = FirebaseUtil.getFirebaseAuthInstance().currentUser?.let {
-//            ChatMessageAdapter(
-//                currentUserId = it.uid/*currentUserId*/,
-//                chatMessages = chatMessages
-//            )
-//        }
 
         chatsRv.adapter = chatMessageAdapter
         chatsRv.layoutManager = LinearLayoutManager(context) // or context if in a Fragment
@@ -150,7 +147,5 @@ class ChatFragment : Fragment() {
 
             }
     }
-
-
 
 }

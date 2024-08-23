@@ -9,4 +9,6 @@ interface UserRepository {
     fun searchUserByEmail(email: String, onComplete: (User?) -> Unit)
 
     fun addFriendAndCreateChat(currentUserId: String, friendUserId: String, onComplete: (Boolean) -> Unit)
+
+    fun deleteFriend(currentUserId: String, friendUserId: String, onComplete: (Boolean) -> Unit)
 }

@@ -3,6 +3,8 @@ package com.example.chatapp.ui.activities
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.view.View
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
@@ -16,8 +18,11 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import com.bumptech.glide.Glide
+import com.example.chatapp.MyApp
 import com.example.chatapp.data.repository.UserRepositoryImpl
 import com.example.chatapp.data.viewModel.UserProfileViewModel
 import com.example.chatapp.data.viewModel.UserProfileViewModelFactory
@@ -38,6 +43,7 @@ class ProfileActivity : AppCompatActivity() {
     private lateinit var userId: String
     private lateinit var useremail: String
     private var imageUri: Uri? = null
+    lateinit var currentUserId :String
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -49,6 +55,7 @@ class ProfileActivity : AppCompatActivity() {
             insets
         }
 
+        currentUserId = FirebaseAuth.getInstance().currentUser?.uid ?: return
         editBtn = findViewById(R.id.editimg)
         nameTV = findViewById(R.id.profileName)
         myEditText = findViewById(R.id.myEditText)
@@ -59,12 +66,42 @@ class ProfileActivity : AppCompatActivity() {
 
         val imm = getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
 
+        if (!currentUserId.isNullOrEmpty()){
+            val userRepository = UserRepositoryImpl(this)
+            val factory = UserProfileViewModelFactory(userRepository)
+            userProfileViewModel = ViewModelProvider(this, factory)[UserProfileViewModel::class.java]//UserProfileViewModel(userRepository)
+            userProfileViewModel.user.observe(this as LifecycleOwner, Observer { user ->
+                if (user != null) {
+                    Glide.with(this)
+                        .load(user.profilePictureUrl)
+                        .into(ProfileImage)
+
+                    nameTV.text = user.username
+                }
+            })
+            userProfileViewModel.searchUserByEmail(FirebaseAuth.getInstance().currentUser?.email.toString())
+        }
+
         editBtn.setOnClickListener{
             myEditText.visibility = View.VISIBLE
             myEditText.setText(nameTV.getText().toString())
             myEditText.requestFocus()
             imm.showSoftInput(myEditText, InputMethodManager.SHOW_IMPLICIT)
         }
+
+        myEditText.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
+
+            }
+
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+
+            }
+
+            override fun afterTextChanged(s: Editable?) {
+                nameTV.text = s.toString()//myEditText.text.toString()
+            }
+        })
 
         myEditText.setOnEditorActionListener(OnEditorActionListener { v, actionId, event ->
             if (actionId == EditorInfo.IME_ACTION_DONE) {
@@ -102,6 +139,8 @@ class ProfileActivity : AppCompatActivity() {
 
             if (imageUri == null) {
                 Toast.makeText(this,"Please set profile image", Toast.LENGTH_SHORT).show()
+            } else if (nameTV.text.toString().isEmpty() || nameTV.text.toString().equals("Default")) {
+                Toast.makeText(this,"Set Your User Name", Toast.LENGTH_SHORT).show()
             } else {
                 userProfileViewModel.uploadProfilePicture(userId,nameTV.text.toString(), imageUri!!, useremail)
             }

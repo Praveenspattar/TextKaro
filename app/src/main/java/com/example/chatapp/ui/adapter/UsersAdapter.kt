@@ -10,10 +10,15 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.chatapp.FirebaseUtil
 import com.example.chatapp.data.model.UserModel
+import com.example.chatapp.data.viewModel.UserProfileViewModel
 import com.example.chatapp.ui.activities.MainActivity
 import com.praveen.chatapp.R
 
-class UsersAdapter(private val mainActivity: MainActivity, private var friendList: List<UserModel>) : RecyclerView.Adapter<UsersAdapter.UserViewHolder>() {
+class UsersAdapter(private val mainActivity: MainActivity, private var friendList: List<UserModel>,
+    private val userProfileViewModel: UserProfileViewModel
+) : RecyclerView.Adapter<UsersAdapter.UserViewHolder>() {
+
+    val  currentUserId = FirebaseUtil.getFirebaseAuthInstance().currentUser?.uid
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): UserViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.item_users,parent,false)
@@ -25,21 +30,30 @@ class UsersAdapter(private val mainActivity: MainActivity, private var friendLis
     }
 
     override fun onBindViewHolder(holder: UserViewHolder, position: Int) {
+        val friendUserId = friendList[position].friendUid
+
         Glide.with(holder.itemView).load(friendList[position].imageUrl).into(holder.itemProfilePic)
         holder.itemUserName.text = friendList[position].name
         holder.itemMessage.text = friendList[position].lastMsg
 
-        holder.itemView.setOnClickListener {
-            val  currentUserId = FirebaseUtil.getFirebaseAuthInstance().currentUser?.uid
-            val friendUserId = friendList[position].friendUid
-            val chatId = if (currentUserId!! < friendUserId) "$currentUserId-$friendUserId" else "$friendUserId-$currentUserId"
-            val bundle = Bundle().apply {
-                putString("userName", friendList[position].name)
-                putString("chatId", chatId)
-                putString("imgurl", friendList[position].imageUrl)
-                putString("friendUid",friendUserId)
+        holder.itemView.apply {
+            setOnClickListener{
+                val chatId = if (currentUserId!! < friendUserId) "$currentUserId-$friendUserId" else "$friendUserId-$currentUserId"
+                val bundle = Bundle().apply {
+                    putString("userName", friendList[position].name)
+                    putString("chatId", chatId)
+                    putString("imgurl", friendList[position].imageUrl)
+                    putString("friendUid",friendUserId)
+                }
+                mainActivity.navigateToFragment("ChatFragment", bundle)
             }
-            mainActivity.navigateToFragment("ChatFragment", bundle)
+
+            setOnLongClickListener{
+                if (currentUserId != null) {
+                    userProfileViewModel.deleteFriend(currentUserId,friendUserId)
+                }
+                true
+            }
 
         }
 

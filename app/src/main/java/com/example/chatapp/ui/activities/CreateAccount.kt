@@ -57,8 +57,10 @@ class CreateAccount : AppCompatActivity() {
 
                 if (emailET.text.toString().isNotEmpty() && passwordET.text.toString().isNotEmpty()) {
                     account.createAccount(emailET.text.toString(),passwordET.text.toString())
-                } else {
-                    Toast.makeText(this, "Enter password", Toast.LENGTH_SHORT).show()
+                } else if (passwordET.text.toString().isEmpty()) {
+                    Toast.makeText(this, "Enter Password", Toast.LENGTH_SHORT).show()
+                } else if (emailET.text.toString().isEmpty()) {
+                    Toast.makeText(this, "Enter Email", Toast.LENGTH_SHORT).show()
                 }
 
             } else {
